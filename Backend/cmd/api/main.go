@@ -1,12 +1,14 @@
 package main
 
-import(
+import (
 	"net/http"
+	"sentinel-ai/internal/config"
 	"github.com/gin-gonic/gin"
 )
 
 func main(){
 	r:=gin.Default()
+	cfg:=config.LoadConfig()
 
 	r.GET("/health",func(c *gin.Context){
 		c.JSON(http.StatusOK,gin.H{
@@ -14,5 +16,5 @@ func main(){
 		})
 	})
 
-	r.Run(":8080")
+	r.Run(":"+cfg.Port)
 }
