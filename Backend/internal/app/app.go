@@ -2,6 +2,7 @@ package app
 
 import (
 	"sentinel-ai/internal/camera"
+	"sentinel-ai/internal/organization"
 	"sentinel-ai/internal/config"
 	"sentinel-ai/internal/database"
 	"sentinel-ai/internal/router"
@@ -10,30 +11,34 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-type App struct{
+type App struct {
 	Config *config.Config
-	DB *sqlx.DB
+	DB     *sqlx.DB
 	Router *gin.Engine
 }
 
-func New(cfg *config.Config)(*App,error){
+func New(cfg *config.Config) (*App, error) {
 
-	db,err:=database.NewDB(cfg)
-	if err!=nil{
-		return nil,err
+	db, err := database.NewDB(cfg)
+	if err != nil {
+		return nil, err
 	}
 
-	cameraRepo:=camera.NewRepository(db)
-	cameraService:=camera.NewService(cameraRepo)
-	cameraHandler:=camera.NewHandler(cameraService)
+	cameraRepo := camera.NewRepository(db)
+	cameraService := camera.NewService(cameraRepo)
+	cameraHandler := camera.NewHandler(cameraService)
 
-	r:=router.SetupRouter(cameraHandler)
+	orgRepo := organization.NewRepository(db)
+	orgService := organization.NewService(orgRepo)
+	orgHandler := organization.NewHandler(orgService)
 
-	app:=&App{
-		Config:cfg,
-		DB:db,
-		Router:r,
+	r := router.SetupRouter(cameraHandler, orgHandler)
+
+	app := &App{
+		Config: cfg,
+		DB:     db,
+		Router: r,
 	}
 
-	return app,nil
+	return app, nil
 }
