@@ -16,7 +16,7 @@ def run_agent():
         frames=[f for f in os.listdir(FRAME_PATH) if f.startswith("camera_") and f.endswith(".jpg") ]
 
         for frame in frames:
-            camera_id = frame.split('_'[1].split('.'[0]))
+            camera_id = frame.split('_')[1].split('.'[0])
             full_path=os.path.join(FRAME_PATH,frame)
 
             results=model(full_path,conf=0.5,verbose=False)
