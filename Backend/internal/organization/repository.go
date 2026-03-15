@@ -13,14 +13,14 @@ func NewRepository(db *sqlx.DB)*Repository{
 	return &Repository{db:db}
 }
 
-func (r *Repository) Create(org *Organization) error {
+func (r *Repository) Create(ctx context.Context,org *Organization) error {
 	query := `
 	INSERT INTO organizations (name)
 	VALUES ($1)
 	RETURNING id, created_at
 	`
 
-	return r.db.QueryRowx(query, org.Name).
+	return r.db.QueryRowxContext(ctx,query, org.Name).
 		Scan(&org.ID, &org.CreatedAt)
 }
 
@@ -46,10 +46,10 @@ func (r *Repository) GetByID(ctx context.Context,id string) (*Organization, erro
 }
 
 
-func (r *Repository) Delete(id string) error {
+func (r *Repository) Delete(ctx context.Context,id string) error {
 	query := `DELETE FROM organizations WHERE id=$1`
 
-	_, err := r.db.Exec(query, id)
+	_, err := r.db.ExecContext(ctx,query, id)
 
 	return err
 }

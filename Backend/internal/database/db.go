@@ -3,7 +3,7 @@ package database
 import(
 	"fmt"
 
-	"sentinel-ai/internal/config"
+	"sentinel-ai/internal/camera/config"
 
 	"github.com/jmoiron/sqlx"
 	_"github.com/lib/pq"

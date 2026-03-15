@@ -20,7 +20,6 @@ func (h *Handler) Create(c *gin.Context) {
         return
     }
 
-    // Passing Request Context
     res, err := h.service.Create(c.Request.Context(), req)
     if err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

@@ -3,10 +3,11 @@ package app
 import (
 	"context"
 	"sentinel-ai/internal/camera"
-	"sentinel-ai/internal/organization"
-	"sentinel-ai/internal/config"
+	"sentinel-ai/internal/camera/config"
 	"sentinel-ai/internal/database"
+	"sentinel-ai/internal/organization"
 	"sentinel-ai/internal/router"
+	"sentinel-ai/internal/streaming"
 	"sentinel-ai/internal/worker"
 
 	"github.com/gin-gonic/gin"
@@ -47,5 +48,7 @@ func New(cfg *config.Config) (*App, error) {
 	connWorker := worker.NewConnectivityWorker(cameraRepo)
 	go connWorker.Start(context.Background())
 
+	streamManager :=streaming.NewStreamManager(cameraRepo)
+	go streamManager.StartIngestion(context.Background())
 	return app, nil
 }

@@ -13,7 +13,6 @@ func NewService(repo *Repository) *Service {
 }
 
 func (s *Service) CreateOrganization(ctx context.Context, org *Organization) error {
-    // Let the Database Unique Constraint handle the check
     return s.repo.Create(ctx, org)
 }
 

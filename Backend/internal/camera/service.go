@@ -23,6 +23,7 @@ func (s *Service) Create(ctx context.Context, req CreateCameraRequest) (*Camera,
         Name:     req.Name,
         RTSPUrl:  req.RTSPUrl,
         Location: req.Location,
+        OrganizationID: req.OrganizationID,
     }
 
     // Explicitly passing ctx to repo

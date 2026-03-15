@@ -1,15 +1,18 @@
 package main
 
 import (
+	"fmt"
 	"go.uber.org/zap"
 	"sentinel-ai/internal/app"
-	"sentinel-ai/internal/config"
+	"sentinel-ai/internal/camera/config"
 	"sentinel-ai/internal/logger"
 )
 
 func main() {
 
 	cfg := config.LoadConfig()
+	fmt.Printf("DEBUG: Host='%s' Port='%s' User='%s' Pass='%s'\n", 
+    cfg.DBHost, cfg.DBPort, cfg.DBUser, cfg.DBPassword)
 
 	logger.Init()
 

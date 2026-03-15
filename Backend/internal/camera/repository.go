@@ -3,7 +3,6 @@ package camera
 import (
 	"github.com/jmoiron/sqlx"
 	"context"
-	"time"
 )
 
 type Repository struct{
@@ -15,8 +14,14 @@ func NewRepository(db *sqlx.DB)*Repository{
 }
 
 func(r *Repository)Create(ctx context.Context,c *Camera)error{
-	query:=`INSERT INTO cameras(id,name,rtsp_url,location,status) VALUES(uuid_generate_v4(),$1,$2,$3,'offline') RETURNING id,created_at`
-	return r.db.QueryRowxContext(ctx,query,c.Name,c.RTSPUrl,c.Location).Scan(&c.ID, &c.CreatedAt)
+	query:=`INSERT INTO cameras(id,name,rtsp_url,location,status,organization_id) VALUES(uuid_generate_v4(),$1,$2,$3,'offline',$4) RETURNING id,created_at`
+	return r.db.QueryRowxContext(
+		ctx,query,
+		c.Name,
+		c.RTSPUrl,
+		c.Location,
+		c.OrganizationID,
+		).Scan(&c.ID, &c.CreatedAt)
 }
 
 func(r *Repository)GetAll(ctx context.Context)([]Camera,error){
@@ -28,16 +33,16 @@ func(r *Repository)GetAll(ctx context.Context)([]Camera,error){
 
 func(r *Repository)GetByID(ctx context.Context,id string)(*Camera,error){
 	var c Camera
-	err := r.db.GetContext(ctx,&c,"SELECT * FROM cameras WHERE id=$1",id)
-
+    query := `SELECT id, name, rtsp_url, location, status, organization_id, created_at FROM cameras`
+    err := r.db.GetContext(ctx, &c, query)
 	if err!= nil{
 		return nil,err
 	}
 	return &c,nil
 }
 
-func(r *Repository)Delete(id string)error{
-	_,err:=r.db.Exec("DELETE FROM cameras WHERE id =$1",id)
+func(r *Repository)Delete(ctx context.Context,id string)error{
+	_,err:=r.db.ExecContext(ctx,"DELETE FROM cameras WHERE id =$1",id)
 	return err
 }
 

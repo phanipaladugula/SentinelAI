@@ -21,7 +21,7 @@ func (h *Handler) Create(c *gin.Context) {
 		return
 	}
 
-	if err := h.service.CreateOrganization(&org); err != nil {
+	if err := h.service.CreateOrganization(c.Request.Context(),&org); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -30,7 +30,7 @@ func (h *Handler) Create(c *gin.Context) {
 }
 
 func (h *Handler) GetAll(c *gin.Context) {
-	orgs, err := h.service.GetOrganizations()
+	orgs, err := h.service.GetOrganizations(c.Request.Context())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -40,7 +40,7 @@ func (h *Handler) GetAll(c *gin.Context) {
 
 func (h *Handler) GetByID(c *gin.Context) {
 	id := c.Param("id")
-	org, err := h.service.GetOrganizationByID(id)
+	org, err := h.service.GetOrganizationByID(c.Request.Context(),id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "organization not found"})
 		return
@@ -50,7 +50,7 @@ func (h *Handler) GetByID(c *gin.Context) {
 
 func (h *Handler) Delete(c *gin.Context) {
 	id := c.Param("id")
-	if err := h.service.DeleteOrganization(id); err != nil {
+	if err := h.service.DeleteOrganization(c.Request.Context(),id); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}

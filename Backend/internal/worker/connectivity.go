@@ -47,8 +47,8 @@ func (w *ConnectivityWorker) checkCameras(ctx context.Context){
 		if !isReachable(cam.RTSPUrl){
 			status="offline"
 		}
-
-		_,w.repo.UpdateStatus(ctx,cam.ID,status)
+		logger.Log.Info("Camera health check", zap.String("name", cam.Name), zap.String("status", status))
+		_=w.repo.UpdateStatus(ctx,cam.ID,status)
 	}
 }
 
@@ -69,7 +69,7 @@ func isReachable(rtspURL string)bool{
 		return false
 	}
 	conn.Close()
-	return false
+	return true
 }
 
 func containsPort(host string)bool{

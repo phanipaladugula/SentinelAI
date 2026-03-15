@@ -16,10 +16,12 @@ type Config struct{
 }
 
 func LoadConfig() *Config{
-
+    viper.AddConfigPath(".") 
 	viper.SetConfigFile(".env")
 	viper.SetConfigType("env")
 
+	viper.AutomaticEnv()
+	
 	err:=viper.ReadInConfig()
 	
 	if err!=nil{
