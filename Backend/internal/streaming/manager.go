@@ -66,8 +66,8 @@ func(m *StreamManager)startFFmpeg(cam camera.Camera){
 	outputPath := filepath.Join(wd,fmt.Sprintf("camera_%s.jpg", cam.ID))
 
 	cmd:=exec.Command("ffmpeg",
-		"-re","stream_loop",
-		"-1",
+		"-re",
+		"-stream_loop","-1",
 		"-i",cam.RTSPUrl,
 		"-vf","fps=1",
 		"-update","1",

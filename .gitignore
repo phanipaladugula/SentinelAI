@@ -15,3 +15,21 @@ __pycache__/
 *.pt
 
 Backend/camera_*.jpg
+
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Go
+Backend/server
+Backend/Backend.exe
+*.exe
+
+# System/Temporary
+.env
+Backend/camera_*.jpg
+Backend/test_frame.jpg
+
+# IDE
+.vscode/
