@@ -2,6 +2,9 @@ import os
 import time
 from ultralytics import YOLO
 
+conn = psycopg2.connect("host=localhost dbname=sentinel user=postgres password=postgres port=5432")
+cur = conn.cursor()
+
 model = YOLO('yolov8n.pt')
 
 FRAME_PATH = r"C:\Users\phani\VScode\Projects\SentinelAI\Backend"
@@ -33,6 +36,10 @@ def run_agent():
 
                 if camera_id not in last_alert_time or (current_time - last_alert_time[camera_id])>ALERT_COOLDOWN:
                     print(f"[ALERT] {time.strftime('%H:%M:%S')} - Intrusion detected on Camera: "{camera_id})
+                    cur.execute(
+                        "INSERT INTO alerts (camera_id,alert_type,message) VALUES (%s,%s,%s)",
+                        (camera_id,"intrusion","Person detected")
+                    )
                     last_alert_time[camera_id]=current_time
         time.sleep(1)
         time.sleep(1)

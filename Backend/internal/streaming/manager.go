@@ -47,14 +47,14 @@ func(m *StreamManager)StartIngestion(ctx context.Context){
 
 			for _,cam:=range cameras{
 				if cam.Status=="online"{
-					go m.startFFmpeg(cam)
+					go m.startFFmpeg(ctx,cam)
 				}
 			}
 		}
 	}
 }
 
-func(m *StreamManager)startFFmpeg(cam camera.Camera){
+func(m *StreamManager)startFFmpeg(ctx context.Context,cam camera.Camera){
 	m.mu.Lock()
 	if _,exists:=m.processes[cam.ID];exists{
 		m.mu.Unlock()
@@ -65,7 +65,7 @@ func(m *StreamManager)startFFmpeg(cam camera.Camera){
 	wd,_:=os.Getwd()
 	outputPath := filepath.Join(wd,fmt.Sprintf("camera_%s.jpg", cam.ID))
 
-	cmd:=exec.Command("ffmpeg",
+	cmd:=exec.CommandContext(ctx,"ffmpeg",
 		"-re",
 		"-stream_loop","-1",
 		"-i",cam.RTSPUrl,
@@ -85,7 +85,9 @@ func(m *StreamManager)startFFmpeg(cam camera.Camera){
 	logger.Log.Info("Starting stream ingestion", zap.String("camera",cam.Name))
 
 	if err:=cmd.Run();err!=nil{
-		logger.Log.Error("FFmpeg process exited", zap.String("camera",cam.Name),zap.Error(err))
+		if ctx.Err()==nil{
+		 logger.Log.Error("FFmpeg process exited", zap.String("camera",cam.Name),zap.Error(err))
+		}
 		m.mu.Lock()
 		delete(m.processes,cam.ID)
 		m.mu.Unlock()

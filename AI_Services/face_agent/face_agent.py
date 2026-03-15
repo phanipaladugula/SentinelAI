@@ -13,7 +13,7 @@ def run_face_agent():
     print("Face recognition Agent: searching for known faces")
 
     while True:
-        frames=[f for f in os.listdir(FRAME_PATH) if f.startswith("camera") and f.endswith(".jpg")]
+        frames=[f for f in os.listdir(FRAME_PATH) if f.startswith("camera_") and f.endswith(".jpg")]
 
         for frame in frames:
             full_path=os.path.join(FRAME_PATH,frame)
@@ -31,7 +31,7 @@ def run_face_agent():
                         print(f"[MATCH] Identified: {row[0]} (Dist: {row[1]:.4f})")
                     else:
                         print(f"[UNKNOWN] Unauthorized person detected on {frame}")
-            except Exception:
+            except ValueError:
                 pass
         time.sleep(2)
 if __name__=="__main__":
