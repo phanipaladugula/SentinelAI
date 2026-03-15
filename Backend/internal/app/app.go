@@ -1,11 +1,13 @@
 package app
 
 import (
+	"context"
 	"sentinel-ai/internal/camera"
 	"sentinel-ai/internal/organization"
 	"sentinel-ai/internal/config"
 	"sentinel-ai/internal/database"
 	"sentinel-ai/internal/router"
+	"sentinel-ai/internal/worker"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
@@ -15,6 +17,7 @@ type App struct {
 	Config *config.Config
 	DB     *sqlx.DB
 	Router *gin.Engine
+	CameraRepo *camera.Repository
 }
 
 func New(cfg *config.Config) (*App, error) {
@@ -38,7 +41,11 @@ func New(cfg *config.Config) (*App, error) {
 		Config: cfg,
 		DB:     db,
 		Router: r,
+		CameraRepo: cameraRepo,
 	}
+
+	connWorker := worker.NewConnectivityWorker(cameraRepo)
+	go connWorker.Start(context.Background())
 
 	return app, nil
 }

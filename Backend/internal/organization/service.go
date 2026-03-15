@@ -1,38 +1,30 @@
 package organization
 
-import "errors"
+import (
+    "context"
+)
 
 type Service struct {
-	repo *Repository
+    repo *Repository
 }
 
 func NewService(repo *Repository) *Service {
-	return &Service{repo: repo}
+    return &Service{repo: repo}
 }
 
-func (s *Service) CreateOrganization(org *Organization) error {
-	orgs, err := s.repo.GetAll()
-	if err != nil {
-		return err
-	}
-
-	for _, o := range orgs {
-		if o.Name == org.Name {
-			return errors.New("organization name must be unique")
-		}
-	}
-
-	return s.repo.Create(org)
+func (s *Service) CreateOrganization(ctx context.Context, org *Organization) error {
+    // Let the Database Unique Constraint handle the check
+    return s.repo.Create(ctx, org)
 }
 
-func (s *Service) GetOrganizations() ([]Organization, error) {
-	return s.repo.GetAll()
+func (s *Service) GetOrganizations(ctx context.Context) ([]Organization, error) {
+    return s.repo.GetAll(ctx)
 }
 
-func (s *Service) GetOrganizationByID(id string) (*Organization, error) {
-	return s.repo.GetByID(id)
+func (s *Service) GetOrganizationByID(ctx context.Context, id string) (*Organization, error) {
+    return s.repo.GetByID(ctx, id)
 }
 
-func (s *Service) DeleteOrganization(id string) error {
-	return s.repo.Delete(id)
+func (s *Service) DeleteOrganization(ctx context.Context, id string) error {
+    return s.repo.Delete(ctx, id)
 }

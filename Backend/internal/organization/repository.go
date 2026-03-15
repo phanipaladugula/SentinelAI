@@ -1,6 +1,7 @@
 package organization
 
-import(
+import (
+	"context"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -23,23 +24,23 @@ func (r *Repository) Create(org *Organization) error {
 		Scan(&org.ID, &org.CreatedAt)
 }
 
-func (r *Repository) GetAll() ([]Organization, error) {
+func (r *Repository) GetAll(ctx context.Context) ([]Organization, error) {
 	var orgs []Organization
 
 	query := `SELECT * FROM organizations`
 
-	err := r.db.Select(&orgs, query)
+	err := r.db.SelectContext(ctx,&orgs, query)
 
 	return orgs, err
 }
 
 
-func (r *Repository) GetByID(id string) (*Organization, error) {
+func (r *Repository) GetByID(ctx context.Context,id string) (*Organization, error) {
 	var org Organization
 
 	query := `SELECT * FROM organizations WHERE id=$1`
 
-	err := r.db.Get(&org, query, id)
+	err := r.db.GetContext(ctx,&org, query, id)
 
 	return &org, err
 }
